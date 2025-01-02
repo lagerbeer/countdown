@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+ 
+  <title>Bootstrap 3.3.4 Example - jQuery.countdown</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+ 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.jss"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    
+   
+
+
+<script>
+  function makeTimer2() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("24 March 2025 9:56:00 GMT+01:00");			
+  endTime = (Date.parse(endTime) / 1000);
+
+  var now = new Date();
+  now = (Date.parse(now) / 1000);
+
+  var timeLeft = endTime - now;
+
+  var days = Math.floor(timeLeft / 86400); 
+  var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+  var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+  var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+  if (hours < "10") { hours = "0" + hours; }
+  if (minutes < "10") { minutes = "0" + minutes; }
+  if (seconds < "10") { seconds = "0" + seconds; }
+
+  $("#days2").html(days + "<span>Days</span>");
+  $("#hours2").html(hours + "<span>Hours</span>");
+  $("#minutes2").html(minutes + "<span>Minutes</span>");
+  $("#seconds2").html(seconds + "<span>Seconds</span>");		
+
+}
+
+setInterval(function() { makeTimer2(); }, 1000);
+</script>
+
+
+
+<script>
+
+    function makeTimer() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("30 September 2025 9:56:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days").html(days + "<span>Days</span>");
+    $("#hours").html(hours + "<span>Hours</span>");
+    $("#minutes").html(minutes + "<span>Minutes</span>");
+    $("#seconds").html(seconds + "<span>Seconds</span>");		
+
+}
+setInterval(function() { makeTimer(); }, 1000);
+</script>
+ 
+  <style type="text/css">
+    body {
+      padding-top: 30px;
+    }
+    .starter-template {
+      padding: 30px 15px;
+      text-align: center;
+    }
+    .panel {
+      width: 100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #btn-reset {
+      margin-right: 30px;
+    }
+    #clock {
+      margin-bottom: 0;
+    }
+  </style>
+  <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+    
+    body {
+      font-family: 'Reenie Beanie', cursive;
+      width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+      color: rgb(244, 10, 10);
+      background: #222;
+      font-weight: 100;
+    }
+    
+    div {
+      display: inline-block;
+      line-height: 1;
+      padding: 30px;
+      font-size: 30px;
+    }
+    
+    span {
+      display: block;
+      font-size: 30px;
+      color: rgb(240, 6, 6);
+    }
+    
+    #days {
+      font-size: 30px;
+      color: #080808;
+    }
+    #hours {
+      font-size: 30px;
+      color: #080808;
+    }
+    #minutes {
+      font-size: 30px;
+      color: #080808;
+    }
+    #seconds {
+      font-size: 25px;
+      color: #080808;
+    }
+    </style>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+        
+        body {
+          font-family: 'Reenie Beanie', cursive;
+          width: 1400px;
+          margin: 0 auto;
+          text-align: center;
+          color: rgb(251, 11, 11);
+          background: #222;
+          font-weight: 100;
+        }
+        
+        div {
+          display: inline-block;
+          line-height: 1;
+          padding: 30px;
+          font-size: 30px;
+        }
+        
+        span {
+          display: block;
+          font-size: 30px;
+          color: red;
+        }
+        
+        #days2 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #hours2 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #minutes2 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #seconds2 {
+          font-size: 25px;
+          color: #080808;
+        }
+        </style>
+
+
+
+
+<script>
+    function makeTimer3() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("19 May 2025 9:00:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days3").html(days + "<span>Days</span>");
+    $("#hours3").html(hours + "<span>Hours</span>");
+    $("#minutes3").html(minutes + "<span>Minutes</span>");
+    $("#seconds3").html(seconds + "<span>Seconds</span>");		
+
+}
+
+setInterval(function() { makeTimer3(); }, 1000);
+</script>
+
+<script>
+
+    function makeTimer4() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("28 February 2021 9:56:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days4").html(days + "<span>Days</span>");
+    $("#hours4").html(hours + "<span>Hours</span>");
+    $("#minutes4").html(minutes + "<span>Minutes</span>");
+    $("#seconds4").html(seconds + "<span>Seconds</span>");		
+
+}
+setInterval(function() { makeTimer4(); }, 1000);
+</script>
+ 
+  <style type="text/css">
+    body {
+      padding-top: 30px;
+    }
+    .starter-template {
+      padding: 30px 15px;
+      text-align: center;
+    }
+    .panel {
+      width: 100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #btn-reset {
+      margin-right: 30px;
+    }
+    #clock {
+      margin-bottom: 0;
+    }
+  </style>
+  <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+    
+    body {
+      font-family: 'Reenie Beanie', cursive;
+      width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+      color: red;
+      background: #222;
+      font-weight: 100;
+    }
+    
+    div {
+      display: inline-block;
+      line-height: 1;
+      padding: 30px;
+      font-size: 30px;
+    }
+    
+    span {
+      display: block;
+      font-size: 30px;
+      color: red;
+    }
+    
+    #days4 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #hours4 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #minutes4 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #seconds4 {
+      font-size: 25px;
+      color: #080808;
+    }
+    </style>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+        
+        body {
+          font-family: 'Reenie Beanie', cursive;
+          width: 1400px;
+          margin: 0 auto;
+          text-align: center;
+          color: red;
+          background: #222;
+          font-weight: 100;
+        }
+        
+        div {
+          display: inline-block;
+          line-height: 1;
+          padding: 5px;
+          font-size: 30px;
+        }
+        
+        span {
+          display: block;
+          font-size: 30px;
+          color: red;
+        }
+        
+        #days3 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #hours3 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #minutes3 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #seconds3 {
+          font-size: 25px;
+          color: #080808;
+        }
+        </style>
+
+
+
+<script>
+  function makeTimer6() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("24 March 2025 9:56:00 GMT+01:00");			
+  endTime = (Date.parse(endTime) / 1000);
+
+  var now = new Date();
+  now = (Date.parse(now) / 1000);
+
+  var timeLeft = endTime - now;
+
+  var days = Math.floor(timeLeft / 86400); 
+  var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+  var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+  var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+  if (hours < "10") { hours = "0" + hours; }
+  if (minutes < "10") { minutes = "0" + minutes; }
+  if (seconds < "10") { seconds = "0" + seconds; }
+
+  $("#days6").html(days + "<span>Days</span>");
+  $("#hours6").html(hours + "<span>Hours</span>");
+  $("#minutes6").html(minutes + "<span>Minutes</span>");
+  $("#seconds6").html(seconds + "<span>Seconds</span>");		
+
+}
+
+setInterval(function() { makeTimer6(); }, 1000);
+</script>
+
+
+
+<script>
+
+    function makeTimer5() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("30 September 2025 9:56:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days5").html(days + "<span>Days</span>");
+    $("#hours5").html(hours + "<span>Hours</span>");
+    $("#minutes5").html(minutes + "<span>Minutes</span>");
+    $("#seconds5").html(seconds + "<span>Seconds</span>");		
+
+}
+setInterval(function() { makeTimer5(); }, 1000);
+</script>
+ 
+  <style type="text/css">
+    body {
+      padding-top: 30px;
+    }
+    .starter-template {
+      padding: 30px 15px;
+      text-align: center;
+    }
+    .panel {
+      width: 100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #btn-reset {
+      margin-right: 30px;
+    }
+    #clock {
+      margin-bottom: 0;
+    }
+  </style>
+  <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+    
+    body {
+      font-family: 'Reenie Beanie', cursive;
+      width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+      color: red;
+      background: #222;
+      font-weight: 100;
+    }
+    
+    div {
+      display: inline-block;
+      line-height: 1;
+      padding: 30px;
+      font-size: 30px;
+    }
+    
+    span {
+      display: block;
+      font-size: 30px;
+      color: red;
+    }
+    
+    #days6 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #hours6 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #minutes6 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #seconds6 {
+      font-size: 25px;
+      color: #080808;
+    }
+    </style>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+        
+        body {
+          font-family: 'Reenie Beanie', cursive;
+          width: 1400px;
+          margin: 0 auto;
+          text-align: center;
+          color: rgb(255, 255, 255);
+          background: #222;
+          font-weight: 100;
+        }
+        
+        div {
+          display: inline-block;
+          line-height: 1;
+          padding: 30px;
+          font-size: 30px;
+        }
+        
+        span {
+          display: block;
+          font-size: 30px;
+          color: red;
+        }
+        
+        #days5 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #hours5 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #minutes5 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #seconds5 {
+          font-size: 25px;
+          color: #080808;
+        }
+        </style>
+
+
+
+
+<script>
+    function makeTimer7() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("19 May 2025 9:00:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days7").html(days + "<span>Days</span>");
+    $("#hours7").html(hours + "<span>Hours</span>");
+    $("#minutes7").html(minutes + "<span>Minutes</span>");
+    $("#seconds7").html(seconds + "<span>Seconds</span>");		
+
+}
+
+setInterval(function() { makeTimer7(); }, 1000);
+</script>
+
+<script>
+
+    function makeTimer8() {
+
+//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
+var endTime = new Date("28 February 2021 9:56:00 GMT+01:00");			
+    endTime = (Date.parse(endTime) / 1000);
+
+    var now = new Date();
+    now = (Date.parse(now) / 1000);
+
+    var timeLeft = endTime - now;
+
+    var days = Math.floor(timeLeft / 86400); 
+    var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+    var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+    var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+    if (hours < "10") { hours = "0" + hours; }
+    if (minutes < "10") { minutes = "0" + minutes; }
+    if (seconds < "10") { seconds = "0" + seconds; }
+
+    $("#days8").html(days + "<span>Days</span>");
+    $("#hours8").html(hours + "<span>Hours</span>");
+    $("#minutes8").html(minutes + "<span>Minutes</span>");
+    $("#seconds8").html(seconds + "<span>Seconds</span>");		
+
+}
+setInterval(function() { makeTimer8(); }, 1000);
+</script>
+ 
+  <style type="text/css">
+    body {
+      padding-top: 30px;
+    }
+    .starter-template {
+      padding: 30px 15px;
+      text-align: center;
+    }
+    .panel {
+      width: 100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #btn-reset {
+      margin-right: 30px;
+    }
+    #clock {
+      margin-bottom: 0;
+    }
+  </style>
+  <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+    
+    body {
+      font-family: 'Reenie Beanie', cursive;
+      width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+      color: red;
+      background: #222;
+      font-weight: 100;
+    }
+    
+    div {
+      display: inline-block;
+      line-height: 1;
+      padding: 30px;
+      font-size: 30px;
+    }
+    
+    span {
+      display: block;
+      font-size: 30px;
+      color: red;
+    }
+    
+    #days8 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #hours8 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #minutes8 {
+      font-size: 30px;
+      color: #080808;
+    }
+    #seconds8 {
+      font-size: 25px;
+      color: #080808;
+    }
+    </style>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700);
+        
+        body {
+          font-family: 'Reenie Beanie', cursive;
+          width: 1400px;
+          margin: 0 auto;
+          text-align: center;
+          color: rgb(231, 18, 18);
+          background: #222;
+          font-weight: 100;
+        }
+        
+        div {
+          display: inline-block;
+          line-height: 1;
+          padding: 5px;
+          font-size: 30px;
+        }
+        
+        span {
+          display: block;
+          font-size: 30px;
+          color: red;
+        }
+        
+        #days7 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #hours7 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #minutes7 {
+          font-size: 30px;
+          color: #080808;
+        }
+        #seconds7 {
+          font-size: 25px;
+          color: #080808;
+        }
+        </style>
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  
+
+
+
+  <title>Sticky Notes Basic Layout</title>
+
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Reenie+Beanie|Lato:700'>
+  
+<style>
+body {
+  margin: 30px auto;
+  font-family: 'Lato';
+  background:#666;
+  color:#fff;
+}
+
+*{
+  margin:0;
+  padding:0;
+}
+
+h4 {
+
+  font-weight: bold;
+  font-size: 2rem;
+}
+div {
+  font-family: 'Reenie Beanie';
+  font-size: 2rem;
+}
+ul,li{
+  list-style:none;
+}
+ul{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+ul li a{
+  text-decoration:none;
+  color:#000;
+  background:#ffc;
+  display:block;
+  height:20em;
+  width:20em;
+  padding:1em;
+  box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+  transform: rotate(-6deg);
+  transition: transform .15s linear;
+}
+
+ul li:nth-child(even) a{
+  transform:rotate(4deg);
+  position:relative;
+  top:5px;
+  background:#cfc;
+}
+ul li:nth-child(3n) a{
+  transform:rotate(-3deg);
+  position:relative;
+  top:-5px;
+  background:#ccf;
+}
+ul li:nth-child(5n) a{
+  transform:rotate(5deg);
+  position:relative;
+  top:-30px;
+}
+
+ul li a:hover,ul li a:focus{
+  box-shadow:30px 30px 7px rgba(0,0,0,.7);
+  transform: scale(1.25);
+  position:relative;
+  z-index:5;
+}
+
+ul li{
+  margin:1em;
+}
+</style>
+
+  
+  
+  
+</head>
+
+<body translate="no">
+  <ul>
+  <li>
+    <a href="#" contenteditable>
+      <h4> Europe for 3 months March 20th 2025 Timer </h4>
+ 
+      <div id="timer">
+      <div id="days"></div>
+      <div id="hours"></div>
+      <div id="minutes"></div>
+      <div id="seconds"></div>
+    </div>
+    </a>
+  </li>
+  <li>
+    <a href="#" contenteditable>
+      <h4>Joe Turns 62!! Social Security Cash $$$!! </h4>
+ 
+      <div id="timer2">
+      <div id="days2"></div>
+      <div id="hours2"></div>
+      <div id="minutes2"></div>
+      <div id="seconds2"></div>
+    </div>
+    </a>
+  </li>
+  <li>
+  <a href="#" contenteditable>
+    <h4>Timer3 </h4>
+
+    <div id="timer3">
+    <div id="days3"></div>
+    <div id="hours3"></div>
+    <div id="minutes3"></div>
+    <div id="seconds3"></div>
+  </div>
+    </a>
+  </li>
+  <li>
+    <a href="#" contenteditable>
+      <h4>Trans Atlantic to Europe for 3 months April 20th 2024 Timer4 </h4>
+  
+      <div id="timer4">
+      <div id="days4"></div>
+      <div id="hours4"></div>
+      <div id="minutes4"></div>
+      <div id="seconds4"></div>
+    </div>
+    </a>
+  </li>
+</a>
+</li>
+<li>
+  <a href="#" contenteditable>
+    <h4>Trans Atlantic to Europe for 3 months April 20th 2024 Timer5 </h4>
+
+    <div id="timer5">
+    <div id="days5"></div>
+    <div id="hours5"></div>
+    <div id="minutes5"></div>
+    <div id="seconds5"></div>
+  </div>
+    </a>
+  </li>
+  <li>
+    <a href="#" contenteditable>
+      <h4>Trans Atlantic to Europe for 3 months April 20th 2024 Timer5 </h4>
+  
+      <div id="timer6">
+      <div id="days6"></div>
+      <div id="hours6"></div>
+      <div id="minutes6"></div>
+      <div id="seconds6"></div>
+    </div>
+    </a>
+  </li>
+  <li>
+    <a href="#" contenteditable>
+      <h4>Trans Atlantic to Europe for 3 months April 20th 2024 Timer5 </h4>
+  
+      <div id="timer7">
+      <div id="days7"></div>
+      <div id="hours7"></div>
+      <div id="minutes7"></div>
+      <div id="seconds7"></div>
+    </div>
+    </a>
+  </li>
+  <li>
+    <a href="#" contenteditable>
+      <h4>Trans Atlantic to Europe for 3 months April 20th 2024 Timer5 </h4>
+  
+      <div id="timer8">
+      <div id="days8"></div>
+      <div id="hours8"></div>
+      <div id="minutes8"></div>
+      <div id="seconds8"></div>
+    </div>
+    </a>
+  </li>
+</ul>
+   
+ 
+</body>
+
+</html>

@@ -1,0 +1,1258 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>jQuery Countdown</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/ico" href="favicon.ico">
+<link rel="stylesheet" href="css/normalize.css">
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/south-street/jquery-ui.css">
+<link rel="stylesheet" href="css/jquery.bookmark.css">
+<link rel="stylesheet" href="css/jquery.countdown.css">
+<link rel="stylesheet" href="css/demo.css">
+<style>
+.demoLabel.wide { width: 17em; }
+pre.wide div.showCode { margin-left: 21.5em; }
+.ui-widget-content pre.ui-state-active { color: #000; font-weight: normal; }
+.countdown { float: left; width: 240px; }
+#showAll, #alwaysShow, #sinceCountdown, #allLong1, #allLong2, #allShort1, #allShort2, #timesCountdown { width: 350px; }
+#l10nCountdown { width: 420px; }
+#noDays, #noSeconds, #compact { width: 180px; }
+#noDaysSeconds, #minimal, #significantLong1, #significantLong2, #significantShort1, #significantShort2 { width: 120px; }
+#byMonth, #compactAll, #l10nCompact, #sinceCompact { width: 340px; }
+#compact .countdown_amount, #minimal .countdown_amount, #l10nCompact .countdown_amount,
+#compactAll .countdown_amount, #sinceCompact .countdown_amount { font-size: 150%; }
+#textLayout { width: 190px; padding: 4px; }
+#listLayout { width: 190px; }
+#compactLayout { width: 190px; padding: 2px 4px; }
+#imageLayout { width: 120px; padding: 5px; background-color: #000; }
+#imageLayout span { display: block; float: left; width: 10px; height: 21px;
+	background: url(img/countdownLED.png) no-repeat 0px 0px; }
+#imageLayout span.image0 { background-position: -0px 0px; }
+#imageLayout span.image1 { background-position: -10px 0px; }
+#imageLayout span.image2 { background-position: -20px 0px; }
+#imageLayout span.image3 { background-position: -30px 0px; }
+#imageLayout span.image4 { background-position: -40px 0px; }
+#imageLayout span.image5 { background-position: -50px 0px; }
+#imageLayout span.image6 { background-position: -60px 0px; }
+#imageLayout span.image7 { background-position: -70px 0px; }
+#imageLayout span.image8 { background-position: -80px 0px; }
+#imageLayout span.image9 { background-position: -90px 0px; }
+#imageLayout span.imageDay { background-position: -100px 0px; }
+#imageLayout span.imageSep { background-position: -110px 0px; }
+#imageLayout span.imageSpace { background-position: -120px 0px; }
+#glowingLayout { width: 418px; padding: 5px; background-color: #000; }
+#glowingLayout span { display: block; float: left; width: 34px; height: 50px;
+	background: url(img/countdownGlowing.gif) no-repeat 0px 0px; }
+#glowingLayout span.image0 { background-position: -0px 0px; }
+#glowingLayout span.image1 { background-position: -34px 0px; }
+#glowingLayout span.image2 { background-position: -68px 0px; }
+#glowingLayout span.image3 { background-position: -102px 0px; }
+#glowingLayout span.image4 { background-position: -136px 0px; }
+#glowingLayout span.image5 { background-position: -170px 0px; }
+#glowingLayout span.image6 { background-position: -204px 0px; }
+#glowingLayout span.image7 { background-position: -238px 0px; }
+#glowingLayout span.image8 { background-position: -272px 0px; }
+#glowingLayout span.image9 { background-position: -306px 0px; }
+#glowingLayout span.imageDay { background-position: -340px 0px; }
+#glowingLayout span.imageSep { background-position: -374px 0px; }
+#glowingLayout span.imageSpace { background-position: -408px 0px; }
+.compared { float: left; padding: 0em 1em; }
+#expireMessage .over { height: 33px; padding-top: 10px; text-align: center; }
+#showPauseTime, #showLapTime { float: left; width: 240px; text-align: center; font-weight: bold; }
+.highlight { color: #f00; }
+</style>
+<script src="js/modernizr-2.6.2.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="js/jquery.plugin.js"></script>
+<script src="js/jquery.localisation.js"></script>
+<script src="js/jquery.bookmark.js"></script>
+<script src="js/jquery.countdown.js"></script>
+<script src="js/jquery.chili-2.2.js"></script>
+<script src="js/demo.js"></script>
+<script>
+var longWayOff = new Date();
+longWayOff.setDate(longWayOff.getDate() + 500);
+var liftoffTime = new Date();
+liftoffTime.setDate(liftoffTime.getDate() + 5);
+var startYear = new Date();
+startYear = new Date(startYear.getFullYear(), 1 - 1, 1, 0, 0, 0);
+var shortly = 0;
+
+$(function () {
+	$('#download').click(function() {
+		pageTracker._trackPageview('/downloads/countdown-2.1.0');
+		window.location = 'zip/jquery.countdown.package-2.1.0.zip';
+	});
+	$('#defaultCountdown').countdown('option', {description: ''});
+	$('#language').change(localise);
+	localise();
+});
+
+function twoDigits(value) {
+	return (value < 10 ? '0' : '') + value;
+}
+
+var descriptions = [];
+descriptions[''] = 'Until liftoff';
+descriptions['fr'] = 'Jusqu\'au décollage';
+descriptions['nl'] = 'Tot de lancering';
+
+function localise() {
+	var language = $('#language').val();
+	$.localise('js/jquery.countdown', language);
+	var desc = descriptions[language] || descriptions[''];
+	$('#l10nCountdown').countdown('option', $.extend({description: desc}, $.countdown.regionalOptions[language]));
+	$('#l10nCompact').countdown('option', $.countdown.regionalOptions[language]);
+	$.countdown.setDefaults($.countdown.regionalOptions['']);
+}
+</script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body>
+<header role="banner">
+	<h1>jQuery Countdown</h1>
+</header>
+<section>
+<!-- Ad top -->
+<ins class="adsbygoogle top" style="width:234px;height:60px" data-ad-client="ca-pub-1555315548255079" data-ad-slot="1375936143"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<p>A <a href="http://jquery.com">jQuery</a> <a href="http://plugins.jquery.com/kbw.countdown/">plugin</a>
+	that sets a <code>div</code> or <code>span</code> to show a countdown to a given time.</p>
+<p>The current version is <span class="version">2.1.0</span> and is available 
+	under the <a href="licence.html">MIT</a> licence.
+	For more detail see the <a href="countdownRef.html">documentation reference</a> page.
+	Or see a <a href="countdownBasics.html">minimal page</a> that you could
+	use as a basis for your own investigations.</p>
+<p style="text-align: center;">
+	<button type="button" id="download">Download now</button>
+	<span id="bookmark"></span>
+</p>
+</section>
+<section id="tabs" role="main">
+	<ul>
+		<li><a href="#default"><span>Defaults</span></a></li>
+		<li><a href="#formats1"><span>Formats 1</span></a></li>
+		<li><a href="#formats2"><span>Formats 2</span></a></li>
+		<li><a href="#layouts"><span>Layouts</span></a></li>
+		<li><a href="#significant"><span>Significant</span></a></li>
+		<li><a href="#since"><span>Count Up</span></a></li>
+		<li><a href="#relative"><span>Relative</span></a></li>
+		<li class="tabSplit"><a href="#pause"><span>Pause/Lap</span></a></li>
+		<li><a href="#zones"><span>Time Zones</span></a></li>
+		<li><a href="#callback"><span>Callbacks</span></a></li>
+		<li><a href="#l10n"><span>Localisation</span></a></li>
+		<li><a href="#misc"><span>Miscellaneous</span></a></li>
+		<li><a href="#wild"><span>In the Wild</span></a></li>
+		<li><a href="#quick"><span>Quick Ref</span></a></li>
+	</ul>
+	<article id="default" class="feature">
+		<header>Default Settings</header>
+		<p>The countdown functionality can easily be added to a division with appropriate
+			default settings, although you do need to set the target time.
+			You can also remove the countdown widget if it is no longer required.</p>
+		<p><span class="demoLabel">Default countdown:</span>
+			<span id="defaultCountdown" class="countdown"></span>&nbsp;
+			<button type="button" id="removeCountdown">Remove</button></p>
+		<pre><code class="jsdemo">var newYear = new Date();
+newYear = new Date(newYear.getFullYear() + 1, 1 - 1, 1);
+$('#defaultCountdown').countdown({until: newYear});
+
+$('#removeCountdown').click(function() {
+	var destroy = $(this).text() === 'Remove';
+	$(this).text(destroy ? 'Re-attach' : 'Remove');
+	$('#defaultCountdown').countdown(destroy ? 'destroy' : {until: newYear});
+});</code></pre>
+		<p>The defaults are:</p>
+		<ul>
+			<li>Text is in English</li>
+			<li>Format is 'dHMS'</li>
+			<li>Days are shown if needed</li>
+			<li>Hours/minutes/seconds are shown</li>
+		</ul>
+		<p>You can override the defaults globally as shown below:</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="js">$.countdown.setDefaults({description: 'Until liftoff'});</code></span></pre>
+		<p>Processed fields are marked with a class of <code>hasCountdown</code>
+			and are not re-processed if targetted a second time.</p>
+		<hr>
+		<p><em>A note on Date</em> - the JavaScript <code>Date</code> constructor expects
+			the year, month, and day as parameters. However, the month ranges from 0 to 11.
+			To make explicit what date is intended (does a month of 3 mean March or April?)
+			I specify the month from 1 to 12 and manually subtract the 1.
+			Thus the following denotes 25 December, 2014.</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="js">$(selector).countdown({since: new Date(2014, 12-1, 25)});</code></span></pre>
+	</article>
+	<article id="formats1" class="feature">
+		<header>Basic Formats</header>
+		<p>You can control how the countdown is presented via the <em>format</em> setting.
+			This is one or more of the following characters: 'Y' for years, 'O' for months,
+			'W' for weeks, 'D' for days, 'H' for hours, 'M' for minutes, 'S' for seconds.
+			Use upper-case characters for required fields and the corresponding lower-case
+			characters for display only if non-zero.</p>
+		<p><span class="demoLabel">Don't show days:</span>
+			<span id="noDays" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#noDays').countdown({until: liftoffTime, format: 'HMS'});</code></pre>
+		<p><span class="demoLabel">Don't show seconds:</span> 
+			<span id="noSeconds" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#noSeconds').countdown({until: liftoffTime, format: 'dHM'});</code></pre>
+		<p><span class="demoLabel">Don't show either:</span> 
+			<span id="noDaysSeconds" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#noDaysSeconds').countdown({until: liftoffTime, format: 'HM'});</code></pre>
+		<p><span class="demoLabel">Pad with zeroes:</span> 
+			<span id="padZeroes" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#padZeroes').countdown({until: liftoffTime, padZeroes: true});</code></pre>
+		<p><span class="demoLabel">Compact version:</span> 
+			<span id="compact" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#compact').countdown({until: liftoffTime, compact: true,
+	description: ''});</code></pre>
+		<p><span class="demoLabel">Minimal compact version:</span> 
+			<span id="minimal" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#minimal').countdown({until: liftoffTime, compact: true,
+	format: 'HM', description: ''});</code></pre>
+		<p><span class="demoLabel">Formatted description:</span> 
+			<span id="formatted" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#formatted').countdown({until: liftoffTime, 
+	description: 'To the &lt;i&gt;next release&lt;/i&gt; of &lt;a href="' +
+	'http://jquery.com/plugins/project/countdown2"&gt;jQuery Countdown&lt;/a&gt;!'});</code></pre>
+	</article>
+	<article id="formats2" class="feature">
+		<header>Extended Formats</header>
+		<p>For targets further in the future, there are more presentation options.</p>
+		<p><span class="demoLabel">Show it all:</span>
+			<span id="showAll" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#showAll').countdown({until: longWayOff, format: 'YOWDHMS'});</code></pre>
+		<p><span class="demoLabel">By month:</span> 
+			<span id="byMonth" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#byMonth').countdown({until: longWayOff, format: 'odHM'});</code></pre>
+		<p><span class="demoLabel">By week:</span> 
+			<span id="byWeek" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#byWeek').countdown({until: longWayOff, format: 'wdHM'});</code></pre>
+		<p><span class="demoLabel">Strange combination:</span> 
+			<span id="strangeCombo" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#strangeCombo').countdown({until: longWayOff, format: 'WHS'});</code></pre>
+		<p><span class="demoLabel">Compact version:</span> 
+			<span id="compactAll" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#compactAll').countdown({until: longWayOff, compact: true,
+	format: 'YOWDHMS', description: ''});</code></pre>
+		<p><span class="demoLabel">Show all values as needed:</span> 
+			<span id="asNeeded" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#asNeeded').countdown({until: liftoffTime, format: 'yowdHMS'});</code></pre>
+		<p><span class="demoLabel">Show all values always:</span> 
+			<span id="alwaysShow" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#alwaysShow').countdown({until: liftoffTime, format: 'YOWDHMS'});</code></pre>
+	</article>
+	<article id="layouts" class="feature">
+		<header>Customised Layouts</header>
+		<p>Create your own customised layout for more control over the countdown appearance.</p>
+		<p>Indicate substitution points with '{desc}' for the description,
+			'{sep}' for the time separator, '{pv}' where
+			<em>p</em> is 'y' for years, 'o' for months, 'w' for weeks, 'd' for days,
+			'h' for hours, 'm' for minutes, or 's' for seconds and <em>v</em> is
+			'n' for the period value, 'nn' for the period value with a 
+			minimum of two digits, 'nnn' for the period value with a 
+			minimum of three digits, or 'l' for the period label
+			(long or short form depending on the <em>compact</em> setting),
+			or '{pd}' where <em>p</em> is as above and <em>d</em> is '1' for the units digit,
+			'10' for the tens digit, '100' for the hundreds digit,
+			or '1000' for the thousands digit.</p>
+		<p>If you need to exclude entire sections when the period value is zero 
+			and you have specified the period as optional, surround these sections
+			with '{p&lt;}' and '{p>}', where <em>p</em> is the same as above.</p>
+		<p>Your layout can just be simple text, or can contain HTML markup as well.
+			You can even embed your HTML within the countdown division/span
+			and reference it from there.</p>
+		<p><span class="demoLabel">Simple text:</span>
+			<span id="textLayout" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#textLayout').countdown({until: liftoffTime,
+	layout: '{sn} {sl}, {mn} {ml}, {hn} {hl}, and {dn} {dl}'});</code></pre>
+		<p><span class="demoLabel">Unordered list:</span>
+			<span id="listLayout" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#listLayout').countdown({until: liftoffTime, format: 'yODHMS',
+	layout: '&lt;ul>{y&lt;}&lt;li>{yn} {yl}&lt;/li>{y>}{o&lt;}&lt;li>{on} {ol}&lt;/li>{o>}' +
+	'{d&lt;}&lt;li>{dn} {dl}&lt;/li>{d>}{h&lt;}&lt;li>{hn} {hl}&lt;/li>{h>}' +
+	'{m&lt;}&lt;li>{mn} {ml}&lt;/li>{m>}{s&lt;}&lt;li>{sn} {sl}&lt;/li>{s>}&lt;/ul>'});</code></pre>
+		<p><span class="demoLabel">Compact with two digits:</span>
+			<span id="compactLayout" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#compactLayout').countdown({until: liftoffTime, compact: true,
+	layout: 'just &lt;b>{dn} {dl} {hnn}{sep}{mnn}{sep}{snn}&lt;/b> {desc}',
+	description: 'to wait'});</code></pre>
+		<p><span class="demoLabel">Using images with an embedded layout:</span>
+			<span id="imageLayout" class="countdown">
+				<span class="image{d10}"></span>
+				<span class="image{d1}"></span>
+				<span class="imageDay"></span>
+				<span class="imageSpace"></span>
+				<span class="image{h10}"></span>
+				<span class="image{h1}"></span>
+				<span class="imageSep"></span>
+				<span class="image{m10}"></span>
+				<span class="image{m1}"></span>
+				<span class="imageSep"></span>
+				<span class="image{s10}"></span>
+				<span class="image{s1}"></span>
+			</span></p>
+		<pre><code class="htmldemo">&lt;span id="imageLayout">
+	&lt;span class="image{d10}">&lt;/span>
+	&lt;span class="image{d1}">&lt;/span>
+	&lt;span class="imageDay">&lt;/span>
+	&lt;span class="imageSpace">&lt;/span>
+	&lt;span class="image{h10}">&lt;/span>
+	&lt;span class="image{h1}">&lt;/span>
+	&lt;span class="imageSep">&lt;/span>
+	&lt;span class="image{m10}">&lt;/span>
+	&lt;span class="image{m1}">&lt;/span>
+	&lt;span class="imageSep">&lt;/span>
+	&lt;span class="image{s10}">&lt;/span>
+	&lt;span class="image{s1}">&lt;/span>
+&lt;/span></code></pre>
+		<pre><code class="jsdemo">$('#imageLayout').countdown({until: liftoffTime, compact: true,
+	layout: $('#imageLayout').html()});</code></pre>
+		<pre><code class="css">#imageLayout span { display: block; float: left; width: 10px; height: 21px;
+	background: url(img/countdownLED.png) no-repeat 0px 0px; }
+#imageLayout span.image0 { background-position: -0px 0px; }
+#imageLayout span.image1 { background-position: -10px 0px; }
+#imageLayout span.image2 { background-position: -20px 0px; }
+#imageLayout span.image3 { background-position: -30px 0px; }
+#imageLayout span.image4 { background-position: -40px 0px; }
+#imageLayout span.image5 { background-position: -50px 0px; }
+#imageLayout span.image6 { background-position: -60px 0px; }
+#imageLayout span.image7 { background-position: -70px 0px; }
+#imageLayout span.image8 { background-position: -80px 0px; }
+#imageLayout span.image9 { background-position: -90px 0px; }
+#imageLayout span.imageDay { background-position: -100px 0px; }
+#imageLayout span.imageSep { background-position: -110px 0px; }
+#imageLayout span.imageSpace { background-position: -120px 0px; }
+</code></pre>
+		<p><span class="demoLabel">Alternate images:</span>
+			<span id="glowingLayout" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#glowingLayout').countdown({until: liftoffTime, compact: true,
+	layout: '&lt;span class="image{d10}">&lt;/span>&lt;span class="image{d1}">&lt;/span>' +
+		'&lt;span class="imageDay">&lt;/span>&lt;span class="imageSpace">&lt;/span>' +
+		'&lt;span class="image{h10}">&lt;/span>&lt;span class="image{h1}">&lt;/span>' +
+		'&lt;span class="imageSep">&lt;/span>' +
+		'&lt;span class="image{m10}">&lt;/span>&lt;span class="image{m1}">&lt;/span>' +
+		'&lt;span class="imageSep">&lt;/span>' +
+		'&lt;span class="image{s10}">&lt;/span>&lt;span class="image{s1}">&lt;/span>'});</code></pre>
+		<pre><code class="css">#glowingLayout span { display: block; float: left; width: 34px; height: 50px;
+	background: url(img/countdownGlowing.gif) no-repeat 0px 0px; }
+#glowingLayout span.image0 { background-position: -0px 0px; }
+#glowingLayout span.image1 { background-position: -34px 0px; }
+#glowingLayout span.image2 { background-position: -68px 0px; }
+#glowingLayout span.image3 { background-position: -102px 0px; }
+#glowingLayout span.image4 { background-position: -136px 0px; }
+#glowingLayout span.image5 { background-position: -170px 0px; }
+#glowingLayout span.image6 { background-position: -204px 0px; }
+#glowingLayout span.image7 { background-position: -238px 0px; }
+#glowingLayout span.image8 { background-position: -272px 0px; }
+#glowingLayout span.image9 { background-position: -306px 0px; }
+#glowingLayout span.imageDay { background-position: -340px 0px; }
+#glowingLayout span.imageSep { background-position: -374px 0px; }
+#glowingLayout span.imageSpace { background-position: -408px 0px; }
+</code></pre>
+	</article>
+	<article id="significant" class="feature">
+		<header>Significant Periods</header>
+		<p>Use the <em>significant</em> option to control how many significant (non-zero) periods are shown.</p>
+		<p><span class="demoLabel">Show one significant period:</span>
+			<span id="significantLong1" class="countdown"></span>
+			<span class="compared">compared to</span>
+			<span id="allLong1" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#significantLong1').countdown({until: longWayOff, format: 'YOWDHMS', significant: 1});
+$('#allLong1').countdown({until: longWayOff, format: 'YOWDHMS'});</code></pre>
+		<p><span class="demoLabel">Show two significant periods:</span>
+			<span id="significantLong2" class="countdown"></span>
+			<span class="compared">compared to</span>
+			<span id="allLong2" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#significantLong2').countdown({until: longWayOff, format: 'YOWDHMS', significant: 2});
+$('#allLong2').countdown({until: longWayOff, format: 'YOWDHMS'});</code></pre>
+		<p><span class="demoLabel">Show one significant period:</span>
+			<span id="significantShort1" class="countdown"></span>
+			<span class="compared">compared to</span>
+			<span id="allShort1" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#significantShort1').countdown({until: '+1h +1m +15s', format: 'YOWDHMS', significant: 1});
+$('#allShort1').countdown({until: '+1h +1m +15s', format: 'YOWDHMS'});</code></pre>
+		<p><span class="demoLabel">Show two significant periods:</span>
+			<span id="significantShort2" class="countdown"></span>
+			<span class="compared">compared to</span>
+			<span id="allShort2" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#significantShort2').countdown({until: '+1h +1m +15s', format: 'YOWDHMS', significant: 2});
+$('#allShort2').countdown({until: '+1h +1m +15s', format: 'YOWDHMS'});</code></pre>
+		<p><span class="demoLabel">With a custom layout:</span>
+			<span id="significantLayout2" class="countdown"></span>
+			<span class="compared">compared to</span>
+			<span id="allLayout2" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#significantLayout2').countdown({until: '+1h +1m +15s', significant: 2,
+	layout: '{d&lt;}{dn} {dl} {d>}{h&lt;}{hn} {hl} {h>}{m&lt;}{mn} {ml} {m>}{s&lt;}{sn} {sl}{s>}'});
+$('#allLayout2').countdown({until: '+1h +1m +15s',
+	layout: '{d&lt;}{dn} {dl} {d>}{h&lt;}{hn} {hl} {h>}{m&lt;}{mn} {ml} {m>}{s&lt;}{sn} {sl}{s>}'});</code></pre>
+	</article>
+	<article id="since" class="feature">
+		<header>Count Up Since a Time</header>
+		<p>You can count up from a previous date/time, instead of down to a future date/time.
+			Note that there will be no expiry event in this case.</p>
+		<p><span class="demoLabel">Count up:</span>
+			<span id="sinceCountdown" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#sinceCountdown').countdown({since: startYear,
+	format: 'YOWDHMS', description: 'Since New Year'});</code></pre>
+		<p><span class="demoLabel">Compact:</span>
+			<span id="sinceCompact" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#sinceCompact').countdown({since: startYear, compact: true,
+	format: 'YOWDHMS', description: ''});</code></pre>
+	</article>
+	<article id="relative" class="feature">
+		<header>Relative Times</header>
+		<p>You can set the <em>until</em> and <em>since</em> values relative to
+			the current time, instead of as an absolute value. A number on its own
+			is treated as seconds. Otherwise use a string to specify the number
+			and units: 'y' for years, 'o' for months, 'w' for weeks, 'd' for days,
+			'h' for hours, 'm' for minutes, 's' for seconds.
+			Either upper or lower case letters may be used.
+			Multiple offsets may be combined into one setting.</p>
+		<p><span class="demoLabel">Until 300 seconds time:</span>
+			<span id="until300s" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#until300s').countdown({until: +300});</code></pre>
+		<p><span class="demoLabel">Until two days time:</span>
+			<span id="until2d" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#until2d').countdown({until: '+2d'});</code></pre>
+		<p><span class="demoLabel">Since three weeks ago:</span>
+			<span id="since3w" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#since3w').countdown({since: '-3W', description: 'Since last time'});</code></pre>
+		<p><span class="demoLabel">Until two days and four hours time:</span>
+			<span id="until2d4h" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#until2d4h').countdown({until: '+2d +4h'});</code></pre>
+	</article>
+	<article id="pause" class="feature">
+		<header>Pause/Resume and Lap Times</header>
+		<p>You can pause and later resume a countdown from where you left off.</p>
+		<p><span class="demoLabel">Pause/resume:</span>
+			<span id="pauseResume" class="countdown"></span>&nbsp;
+			<button type="button" id="pauseButton">Pause</button>&nbsp;
+			<button type="button" id="toggleButton">Toggle</button></p>
+		<p style="clear: both;"><span class="demoLabel">&nbsp;</span>
+			<span id="showPauseTime"></span></p>
+		<pre><code class="jsdemo">$('#pauseResume').countdown({until: liftoffTime, onTick: showPauseTime});
+
+$('#pauseButton').click(function() {
+	var pause = $(this).text() === 'Pause';
+	$(this).text(pause ? 'Resume' : 'Pause');
+	$('#pauseResume').countdown(pause ? 'pause' : 'resume');
+});
+
+$('#toggleButton').click(function() {
+	$('#pauseResume').countdown('toggle');
+});
+
+function showPauseTime(periods) {
+	$('#showPauseTime').text(periods[4] + ':' + twoDigits(periods[5]) +
+		':' + twoDigits(periods[6]));
+}</code></pre>
+		<p>Or you can pause to display a lap time while the countdown continues.</p>
+		<p><span class="demoLabel">Lap time:</span>
+			<span id="lapTime" class="countdown"></span>&nbsp;
+			<button type="button" id="lapButton">Pause</button>&nbsp;
+			<button type="button" id="toggleLapButton">Toggle</button></p>
+		<p style="clear: both;"><span class="demoLabel">&nbsp;</span>
+			<span id="showLapTime"></span></p>
+		<pre><code class="jsdemo">$('#lapTime').countdown({until: liftoffTime, onTick: showLapTime});
+
+$('#lapButton').click(function() {
+	var pause = $(this).text() === 'Pause';
+	$(this).text(pause ? 'Resume' : 'Pause');
+	$('#lapTime').countdown(pause ? 'lap' : 'resume');
+});
+
+$('#toggleLapButton').click(function() {
+	$('#lapTime').countdown('toggleLap');
+});
+
+function showLapTime(periods) {
+	$('#showLapTime').text(periods[4] + ':' + twoDigits(periods[5]) +
+		':' + twoDigits(periods[6]));
+}</code></pre>
+	</article>
+	<article id="zones" class="feature">
+		<header>Time Zones and Synchronisation</header>
+		<p>Cater for time zones with the <code>timezone</code> setting, which is set
+			to the target time's offset from GMT, in either hours or minutes.
+			Alternately, use the <code>UTCDate</code> function to convert the
+			target time to the equivalent UTC date/time.</p>
+		<p>If <code>timezone</code> is left at <code>null</code> it
+			defaults to the timezone on the client.</p>
+		<p><span class="demoLabel">Target time in Sydney, Australia (GMT&nbsp;+10:00):</span>
+			<span id="sydneyCountdown" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#sydneyCountdown').countdown({until: liftoffTime, timezone: +10});</code></pre>
+		<p><span class="demoLabel">Target time in Paris, France (GMT&nbsp;+01:00):</span>
+			<span id="parisCountdown" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#parisCountdown').countdown({until: liftoffTime, timezone: +60});</code></pre>
+		<p><span class="demoLabel">Target time in Los Angeles, USA (GMT&nbsp;-08:00):</span>
+			<span id="laCountdown" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#laCountdown').countdown(
+	{until: $.countdown.UTCDate(-8, liftoffTime)});</code></pre>
+		<p>You can also synchronise the client's time with that of the server.
+			Provide a callback function for the <code>serverSync</code> setting
+			that returns the current server time, usually from an AJAX call.
+			The example below is only a simulation.</p>
+		<p><span class="demoLabel">Server synchronisation (simulated 5 mins ahead):</span>
+			<span id="syncCountdown" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#syncCountdown').countdown(
+	{until: liftoffTime, serverSync: ahead5Mins});
+
+function ahead5Mins() {
+	var server = new Date();
+	server.setMinutes(server.getMinutes() + 5);
+	return server;
+}</code></pre>
+		<p>In reality, you would have a program on the server responding with
+			the current time and connect a function that retrieved it and
+			presented it to the countdown. The following example uses a
+			simple PHP program to return the date/time in a format directly
+			usable by JavaScript. Remember to make the call synchronous
+			and to include the timezone in the response.</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="js">function serverTime() {
+	var time = null;
+	$.ajax({url: 'http://myserver.com/serverTime.php',
+		async: false, dataType: 'text',
+		success: function(text) {
+			time = new Date(text);
+		}, error: function(http, message, exc) {
+			time = new Date();
+	}});
+	return time;
+}</code></span></pre>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="php2">&lt;?php
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Fri, 1 Jan 2010 00:00:00 GMT"); // Date in the past
+header("Content-Type: text/plain; charset=utf-8"); // MIME type
+$now = new DateTime();
+echo $now->format("M j, Y H:i:s O")."\n";
+?></code></span></pre>
+		<p>Or the equivalent Java servlet fragment:</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="java">protected void doGet(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+	response.setHeader("Cache-Control", "no-cache, must-revalidate"); // HTTP/1.1 
+	response.setHeader("Expires", "Fri, 1 Jan 2010 00:00:00 GMT"); // Date in the past 
+	response.setHeader("Content-type", "text/plain; charset=utf-8"); // MIME type
+	String datetime = new SimpleDateFormat("MMM d, yyyy HH:mm:ss Z").format(new Date());
+	response.setHeader("Content-length", String.valueOf(datetime.length())); 
+	response.getOutputStream().write(datetime.getBytes());
+}</code></span></pre>
+	</article>
+	<article id="callback" class="feature">
+		<header>Callback Events</header>
+		<p>On expiry a callback is made to allow you to action the countdown.
+			You can force this event to fire even if the countdown starts after the
+			target time by setting <em>alwaysExpire</em> to <code>true</code>.</p>
+		<p>You can also monitor the countdown on each tick of the clock.</p>
+		<p><span class="demoLabel">Action it in 5 seconds:</span> 
+			<span id="shortly" class="countdown"></span>&nbsp;
+			<button type="button" id="shortlyStart">Start</button></p>
+		<p style="clear: both;"><span class="demoLabel">&nbsp;</span>
+			<span id="monitor"></span></p>
+		<pre><code class="jsdemo">$('#shortly').countdown({until: shortly, 
+	onExpiry: liftOff, onTick: watchCountdown});
+
+$('#shortlyStart').click(function() {
+	shortly = new Date();
+	shortly.setSeconds(shortly.getSeconds() + 5.5);
+	$('#shortly').countdown('option', {until: shortly});
+});
+
+function liftOff() {
+	alert('We have lift off!');
+}
+
+function watchCountdown(periods) {
+	$('#monitor').text('Just ' + periods[5] + ' minutes and ' +
+		periods[6] + ' seconds to go');
+}</code></pre>
+		<p>Or do it your own way on the tick callback and hide the countdown
+			<code>div</code> or <code>span</code>.</p>
+		<p><span class="demoLabel">Every five seconds:</span> 
+			<span id="hidden" style="display: none;"></span><b><span id="everyFive"></span></b></p>
+		<pre><code class="jsdemo">$('#hidden').countdown({until: liftoffTime, format: 'HMS',
+	onTick: everyFive, tickInterval: 5});
+
+function everyFive(periods) {
+	$('#everyFive').text(periods[4] + ':' + twoDigits(periods[5]) +
+		':' + twoDigits(periods[6]));
+}</code></pre>
+		<p>You can have a text message shown automatically on expiry.</p>
+		<p><span class="demoLabel">Show message:</span> 
+			<span id="expireMessage" class="countdown"></span>&nbsp;
+			<button type="button" id="expireMessageStart">Start</button></p>
+		<pre><code class="jsdemo">$('#expireMessage').countdown({until: shortly,
+	expiryText: '&lt;div class="over"&gt;It\'s all over&lt;/div&gt;'});
+	
+$('#expireMessageStart').click(function() {
+	shortly = new Date();
+	shortly.setSeconds(shortly.getSeconds() + 5.5);
+	$('#expireMessage').countdown('option', {until: shortly});
+});</code></pre>
+		<p>Alternately, you can have a new page loaded automatically on expiry.
+			Use the <em>Back</em> button to return.</p>
+		<p><span class="demoLabel">Load new page:</span> 
+			<span id="newPage" class="countdown"></span>&nbsp;
+			<button type="button" id="newPageStart">Start</button></p>
+		<pre><code class="jsdemo">$('#newPage').countdown({until: shortly, expiryUrl: 'http://jquery.com',
+	description: 'To go to jQuery'});
+	
+$('#newPageStart').click(function() {
+	shortly = new Date();
+	shortly.setSeconds(shortly.getSeconds() + 5.5);
+	$('#newPage').countdown('option', {until: shortly});
+});</code></pre>
+	</article>
+	<article id="l10n" class="feature">
+		<header>Localisation</header>
+		<p>You can localise the countdown for other languages and regional differences
+			(over 50 now available).</p>
+		<p><span class="demoLabel wide"><select id="language">
+				<option value="ar">&#8235;العربية (Arabic)</option>
+				<option value="id">Bahasa Indonesia (Indonesian)</option>
+				<option value="ms">Bahasa Melayu (Malaysian)</option>
+				<option value="bn">বাংলা (Bengali/Bangla)</option>
+				<option value="nb">Bokmål (Norwegian)</option>
+				<option value="bs">Bosanski (Bosnian)</option>
+				<option value="bg">български език (Bulgarian)</option>
+				<option value="ca">Català (Catalan)</option>
+				<option value="cs">Čeština (Czech)</option>
+				<option value="cy">Cymraeg (Welsh)</option>
+				<option value="da">Dansk (Danish)</option>
+				<option value="de">Deutsch (German)</option>
+				<option value="et">eesti keel (Estonian)</option>
+				<option value="el">Ελληνικά (Greek)</option>
+				<option value="es">Español (Spanish)</option>
+				<option value="fo">føroyskt (Faroese)</option>
+				<option value="fa">&#8235;فارسی (Farsi/Persian)</option>
+				<option value="fr" selected="selected">Français (French)</option>
+				<option value="gl">Galego (Galician)</option>
+				<option value="sq">Gjuha shqipe (Albanian)</option>
+				<option value="gu">ગુજરાતી (Gujarati)</option>
+				<option value="ko">한국어 (Korean)</option>
+				<option value="he">&#8235;עברית (Hebrew)</option>
+				<option value="hr">Hrvatski jezik (Croatian)</option>
+				<option value="hy">Հայերեն (Armenian)</option>
+				<option value="is">Íslenska (Icelandic)</option>
+				<option value="it">Italiano (Italian)</option>
+				<option value="kn">ಕನ್ನಡ (Kannada)</option>
+				<option value="kk">қазақша (Kazakh)</option>
+				<option value="lv">Latviešu Valoda (Latvian)</option>
+				<option value="lt">lietuvių kalba (Lithuanian)</option>
+				<option value="mk">македонски јазик (Macedonian)</option>
+				<option value="hu">Magyar (Hungarian)</option>
+				<option value="ml">മലയാളം (Malayalam)</option>
+				<option value="my">မြန်မာစာ (Burmese)</option>
+				<option value="nl">Nederlands (Dutch)</option>
+				<option value="ja">日本語 (Japanese)</option>
+				<option value="uz">O‘zbek tili (Uzbek)</option>
+				<option value="th">ภาษาไทย (Thai)</option>
+				<option value="pl">Polski (Polish)</option>
+				<option value="pt-BR">Português (Portuguese/Brazilian)</option>
+				<option value="ro">Română (Romanian)</option>
+				<option value="ru">Русский (Russian)</option>
+				<option value="sk">Slovenčina (Slovak)</option>
+				<option value="sl">Slovenščina (Slovenian)</option>
+				<option value="sr">српски језик (Serbian)</option>
+				<option value="sr-SR">srpski jezik (Serbian)</option>
+				<option value="fi">suomi (Finnish)</option>
+				<option value="sv">Svenska (Swedish)</option>
+				<option value="vi">Tiếng Việt (Vietnamese)</option>
+				<option value="tr">Türkçe (Turkish)</option>
+				<option value="uk">українська мова (Ukrainian)</option>
+				<option value="ur">&#8235;اُردوُ&#8236; (Urdu)</option>
+				<option value="zh-CN">简体中文 (Chinese/Simplified)</option>
+				<option value="zh-TW">繁體中文 (Chinese/Traditional)</option>
+			</select>:</span>
+			<span id="l10nCountdown" class="countdown"></span></p>
+		<p style="clear: both; margin-top: 5px;"><span class="demoLabel wide">&nbsp;</span>
+			<span id="l10nCompact" class="countdown"></span></p>
+		<pre><code class="jsdemo">$('#l10nCountdown').countdown({until: longWayOff,
+	format: 'YOWDHMS', description: 'Jusqu\'au décollage'});
+$('#l10nCompact').countdown({until: longWayOff, compact: true,
+	format: 'YOWDHMS', description: ''});</code></pre>
+		<p>You need to load the appropriate <a href="#l10nPkgs">language package</a>,
+			which adds a language set (<code>$.countdown.regionalOptions[langCode]</code>) and automatically 
+			sets this language as the default for all countdown divisions.</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="html">&lt;script type="text/javascript" src="jquery.countdown-fr.js">&lt;/script></code></span></pre>
+		<p>Thereafter, if desired, you can restore the original language settings.</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="js">$.countdown.setDefaults($.countdown.regionalOptions['']);</code></span></pre>
+		<p>And then configure the language per countdown.</p>
+		<pre class="doc showCode"><span class="ui-state-active"><code class="js">$('#l10n').countdown($.countdown.regionalOptions['fr']);
+$('#l10n').countdown($.extend({other options...}, $.countdown.regionalOptions['fr']));</code></span></pre>
+	</article>
+	<article id="misc" class="feature">
+		<header>Miscellaneous</header>
+		<p>Retrieve the current periods from a countdown timer.</p>
+		<p><span class="demoLabel">Current periods:</span>
+			<span id="timesCountdown" class="countdown"></span>&nbsp;
+			<button type="button" id="getNow">Get now</button></p>
+		<p style="clear: both;"><span class="demoLabel">&nbsp;</span>
+			<span id="curPeriods"></span></p>
+		<pre><code class="jsdemo">$('#timesCountdown').countdown({until: longWayOff, format: 'YOWDHMS'});
+
+$('#getNow').click(function() {
+	var periods = $('#timesCountdown').countdown('getTimes');
+	var text = '';
+	for (var i = 0; i &lt; periods.length; i++) {
+		text += periods[i] + ' ' + $.countdown.regionalOptions[''].labels[i] + ' ';
+	}
+	$('#curPeriods').text(text);
+});</code></pre>
+		<p><span class="demoLabel">Highlight last five seconds:</span>
+			<span id="highlightCountdown" class="countdown"></span>&nbsp;
+			<button id="highlightButton">Restart</button></p>
+		<div style="clear: both;"></div>
+		<pre><code class="jsdemo">$('#highlightCountdown').countdown({until: 0,
+	onTick: highlightLast5});
+	
+function highlightLast5(periods) {
+	if ($.countdown.periodsToSeconds(periods) === 5) {
+		$(this).addClass('highlight');
+	}
+}
+
+$('#highlightButton').click(function() {
+	$('#highlightCountdown').removeClass('highlight').
+		countdown('option', {until: +10});
+});</code></pre>
+	</article>
+	<article id="wild" class="feature">
+		<header>In the Wild</header>
+		<p>This tab highlights examples of this plugin in use "in the wild".</p>
+		<div id="wildLinks">
+			<div>
+				<h3><a href="http://drupal.org/project/jquery_countdown">
+					<img src="img/drupal.png" alt="Drupal"> Drupal Module</a></h3>
+				<p>Provides the jQuery Countdown plugin, along with a simple API function
+					(jquery_countdown_add) to easily add countdown/countup timer elements to the page.
+					There is a submodule called "jQuery Countdown Block" - that can be used
+					to provide one or more countdowns as a Block. It's very easy go to
+					"admin/build/block" and click on the local task "Add countdown block".
+					Now configure the countdown how ever you want. After save you have now a block
+					that can be placed on every region.</p>
+			</div>
+			<div>
+				<h3><a href="http://www.storytimed.com/">
+					<img src="img/storytimed.png" alt="Story Timed"> Story Timed</a></h3>
+				<p>This site is all about writing stories together.
+					You can contribute as much or little as you wish but the idea is to
+					continue the theme and feeling of the story and most importantly
+					have some fun and help others to enjoy the experience too!
+					The countdown is used to time new contributions to the stories.</p>
+			</div>
+			<div style="clear: both;">
+				<h3><a href="http://onlinestudentplanner.com">
+					OnlineStudentPlanner.com</a></h3>
+				<p>OnlineStudentPlanner.com helps students achieve their academic goals
+					by giving students tools to help them plan for their courses.
+					With OnlineStudentPlanner.com you will be able to keep track of your school
+					work, grades and appointments anywhere you are. By using the jQuery Countdown
+					plugin you will always know how many days are left in your semester. </p>
+			</div>
+			<div>
+				<h3><a href="http://www.pickthebucket.org.uk/buckets/buckets_Vw.lasso">
+					Pick the Bucket</a></h3>
+				<p>PickTheBucket enables donors to give directly to projects supporting
+					vulnerable and disadvantaged children around the world. PickTheBucket is
+					operated by Global Care, a UK-based, Christian international children's charity. 
+					PickTheBucket projects are operated by our international partners,
+					running childcare centres, schools, feeding and training programmes worldwide.
+					The countdowns apply to the various buckets available.</p>
+			</div>
+			<div style="clear: both;">
+				<h3><a href="http://startupdeathclock.com">
+					<img src="img/startupdeath.png" alt="Startup Death Clock"> Startup Death Clock</a></h3>
+				<p>The startup death clock tells you what day your startup will run
+					out of money. The countdown plugin is used to display a big scary LCD clock.</p>
+			</div>
+			<div>
+				<h3><a href="http://meetingmngr.com">Meeting Manager</a></h3>
+				<p>This extremely simple application allows you to maximize the
+					effectiveness of your team's time during meetings.  By providing the total
+					number of participants and either their average hourly salary or average
+					yearly salary, we calculate exactly how much money per second that meeting
+					is costing your company/team.</p>
+			</div>
+			<div style="clear: both;">
+				<h3><a href="http://2bthr.com/"><img src="img/2bthr.png" alt="2BTHR"> 2BTHR</a></h3>
+				<p>2BTHR is a simple and fun web application allowing you to create an event by
+					entering a location and then using Google Maps to plot your destination.
+					You can then share the event with your friends and family via Twitter and Facebook!</p>
+			</div>
+			<div>
+				<h3><a href="http://www.pennantchase.com"><img src="img/pennantchase.png" alt="Pennantchase"> Pennantchase.com</a></h3>
+				<p>Pennant Chase is a free baseball simulation website with over 600 active leagues.
+					Baseball fans can draft their teams based on real historical statistics.
+					The countdown is used in the private draft rooms to enforce picks in a timely manner.
+					League commissioners can set a desired timer length, and the countdown re-sets after each pick is made.</p>
+			</div>
+			<div style="clear: both;">
+				<h3><a href="https://store.office.com/countdown-web-part-WA104379311.aspx?assetid=WA104379311">SharePoint WebPart</a></h3>
+				<p>A SharePoint WebPart to display the real-time remaining time until
+					a specific date or event using jQuery/JavaScript.</p>
+			</div>
+			<div>
+				<h3><a href="http://www.ominder.com"><img src="img/ominder.png" alt="Ominder"> Ominder - Organize Your Life Events</a></h3>
+				<p>Ominder is simple and clean event reminder website where users can keep track of
+					their birthdays, anniversaries and much more. Ominder will notify users when
+					an event is about to occur so you never forget. The countdown timer is used
+					to show the user how much time is remaining until their event will occur.</p>
+			</div>
+		</div>
+		<p style="clear: both;">To add another example, please contact me (wood.keith{at}optusnet.com.au)
+			and provide the plugin name, the URL of your site, its title,
+			and a short description of its purpose and where/how the plugin is used.</p>
+	</article>
+	<article id="quick" class="feature doc">
+		<header>Quick Reference</header>
+		<p>A full list of all possible settings is shown below.
+			Note that not all would apply in all cases. For more detail see the
+			<a href="countdownRef.html">documentation reference</a> page.</p>
+		<pre class="showCode"><span class="ui-state-active"><code class="js">$(selector).countdown({
+	labels: ['Years', 'Months', 'Weeks', 'Days', 'Hours', 'Minutes', 'Seconds'],
+		// The expanded texts for the counters
+	labels1: ['Year', 'Month', 'Week', 'Day', 'Hour', 'Minute', 'Second'],
+		// The display texts for the counters if only one
+	compactLabels: ['y', 'm', 'w', 'd'], // The compact texts for the counters
+	whichLabels: null, // Function to determine which labels to use
+	digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], // The digits to display
+	timeSeparator: ':', // Separator for time periods
+	isRTL: false, // True for right-to-left languages, false for left-to-right
+
+	until: null, // new Date(year, mth - 1, day, hr, min, sec) - date/time to count down to
+		// or numeric for seconds offset, or string for unit offset(s):
+		// 'Y' years, 'O' months, 'W' weeks, 'D' days, 'H' hours, 'M' minutes, 'S' seconds
+	since: null, // new Date(year, mth - 1, day, hr, min, sec) - date/time to count up from
+		// or numeric for seconds offset, or string for unit offset(s):
+		// 'Y' years, 'O' months, 'W' weeks, 'D' days, 'H' hours, 'M' minutes, 'S' seconds
+	timezone: null, // The timezone (hours or minutes from GMT) for the target times,
+		// or null for client local
+	serverSync: null, // A function to retrieve the current server time for synchronisation
+	format: 'dHMS', // Format for display - upper case for always, lower case only if non-zero,
+		// 'Y' years, 'O' months, 'W' weeks, 'D' days, 'H' hours, 'M' minutes, 'S' seconds
+	layout: '', // Build your own layout for the countdown
+	compact: false, // True to display in a compact format, false for an expanded one
+	padZeroes: false, // True to add leading zeroes
+	significant: 0, // The number of periods with values to show, zero for all
+	description: '', // The description displayed for the countdown
+	expiryText: '', // A message to display upon expiry, replacing the countdown digits
+	expiryUrl: null, // A URL to load upon expiry, replacing the current page
+	alwaysExpire: false, // True to trigger onExpiry even if never counted down
+	onExpiry: null, // Callback when the countdown expires -
+		// receives no parameters and 'this' is the containing division
+	onTick: null, // Callback when the countdown is updated -
+		// receives int[7] being the breakdown by period (based on format)
+		// and 'this' is the containing division
+	tickInterval: 1 // Interval (seconds) between onTick callbacks
+});
+
+$.countdown.regionalOptions[] // Language/country-specific localisations
+
+$.countdown.setDefaults(settings) // Set global defaults
+
+$.countdown.UTCDate(tz, time) // Standardise a date to UTC format
+$.countdown.UTCDate(tz, year, month, day, hours, mins, secs, ms)
+
+$.countdown.periodsToSeconds(periods) // Convert periods into equivalent seconds 
+
+$.countdown.resync() // Re-synchronise all countdown instances with their server
+
+$(selector).countdown('option', options) // Change instance settings
+$(selector).countdown('option', name, value) // Change a single instance setting
+
+$(selector).countdown('option', name) // Retrieve instance settings
+
+$(selector).countdown('destroy') // Remove countdown functionality
+
+$(selector).countdown('pause') // Stop the countdown but don't clear it
+$(selector).countdown('lap') // Stop the display but continue the countdown
+$(selector).countdown('resume') // Restart a paused or lap countdown
+$(selector).countdown('toggle') // Toggle between pause/resume
+$(selector).countdown('toggleLap') // Toggle between lap/resume
+
+$(selector).countdown('getTimes') // Retrieve the current time periods</code></span></pre>
+	</article>
+</section>
+<!-- Ad mid -->
+<ins class="adsbygoogle mid" style="width:728px;height:90px" data-ad-client="ca-pub-1555315548255079" data-ad-slot="5806135743"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<section class="doc">
+<header>Usage</header>
+<ol>
+<li>Include the jQuery library (1.4+) in the head section of your page.
+	<pre class="showCode"><span class="ui-state-active"><code class="html">&lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"&gt;&lt;/script&gt;</code></span></pre></li>
+<li>Download and include the jQuery Countdown CSS and JavaScript in the head section of your page.
+	<pre class="showCode"><span class="ui-state-active"><code class="html">&lt;link rel="stylesheet" type="text/css" href="css/jquery.countdown.css"&gt;
+&lt;script type="text/javascript" src="js/jquery.plugin.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/jquery.countdown.js"&gt;&lt;/script&gt;</code></span></pre>
+    Alternately, you can use the minimised version <code>jquery.countdown.min.js</code> (13.6K vs 35.0K, 4.5K when zipped).</li>
+<li>Connect the countdown functionality to your divs.
+	<pre class="showCode"><span class="ui-state-active"><code class="js">$(selector).countdown({until: liftoffTime});</code></span></pre>
+	You can include custom settings as part of this process.
+	<pre class="showCode"><span class="ui-state-active"><code class="js">$(selector).countdown({until: liftoffTime, format: 'dHM'});</code></span></pre></li>
+</ol>
+<p> For more detail see the
+	<a href="countdownRef.html">documentation reference</a> page.
+	Or see a <a href="countdownBasics.html">minimal page</a> that you could
+	use as a basis for your own investigations.</p>
+</section>
+<section>
+<header id="l10nPkgs">Localisations</header>
+<p>Localisation packages are available for download and 
+	should be loaded after the main time entry code. These packages 
+	automatically apply their settings as global default values.</p>
+<ul>
+	<li>Albanian (Gjuha shqipe) - <a href="js/jquery.countdown-sq.js">jquery.countdown-sq.js</a> (thanks to Erzen Komoni)</li>
+	<li>Arabic (العربية) - <a href="js/jquery.countdown-ar.js">jquery.countdown-ar.js</a> (thanks to Talal Al Asmari)</li>
+	<li>Armenian (Հայերեն) - <a href="js/jquery.countdown-hy.js">jquery.countdown-hy.js</a> (thanks to Artur Martirosyan)</li>
+	<li>Bengali/Bangla (বাংলা) - <a href="js/jquery.countdown-bn.js">jquery.countdown-bn.js</a> (thanks to Mohammed Tajuddin)</li>
+	<li>Bosnian (Bosanski) - <a href="js/jquery.countdown-bs.js">jquery.countdown-bs.js</a> (thanks to Miralem Mehic)</li>
+	<li>Bulgarian (български език) - <a href="js/jquery.countdown-bg.js">jquery.countdown-bg.js</a> (thanks to Manol Trendafilov)</li>
+	<li>Burmese (မြန်မာစာ) - <a href="js/jquery.countdown-my.js">jquery.countdown-my.js</a> (thanks to Win Lwin Moe)</li>
+	<li>Catalan (Català) - <a href="js/jquery.countdown-ca.js">jquery.countdown-ca.js</a> (thanks to Miquel Casas)</li>
+	<li>Chinese/Simplified (简体中文) - <a href="js/jquery.countdown-zh-CN.js">jquery.countdown-zh-CN.js</a> (thanks to Cloudream)</li>
+	<li>Chinese/Traditional (繁體中文) - <a href="js/jquery.countdown-zh-TW.js">jquery.countdown-zh-TW.js</a> (thanks to Cloudream)</li>
+	<li>Croatian (Hrvatski jezik) - <a href="js/jquery.countdown-hr.js">jquery.countdown-hr.js</a> (thanks to Dejan Broz and zytzagoo)</li>
+	<li>Czech (Čeština) - <a href="js/jquery.countdown-cs.js">jquery.countdown-cs.js</a> (thanks to Roman Chlebec)</li>
+	<li>Danish (Dansk) - <a href="js/jquery.countdown-da.js">jquery.countdown-da.js</a> (thanks to Kasper Buch)</li>
+	<li>Dutch (Nederlands) - <a href="js/jquery.countdown-nl.js">jquery.countdown-nl.js</a> (thanks to Mathias Bynens)</li>
+	<li>Estonian (eesti keel) - <a href="js/jquery.countdown-et.js">jquery.countdown-et.js</a> (thanks to Helmer Aaviksoo)</li>
+	<li>Faroese (føroyskt) - <a href="js/jquery.countdown-fo.js">jquery.countdown-fo.js</a> (thanks to Kasper Friis Christensen)</li>
+	<li>Farsi/Persian (فارسی) - <a href="js/jquery.countdown-fa.js">jquery.countdown-fa.js</a> (thanks to Alireza Ziaie)</li>
+	<li>Finnish (suomi) - <a href="js/jquery.countdown-fi.js">jquery.countdown-fi.js</a> (thanks to Kalle Vänskä and Juha Suni)</li>
+	<li>French (Français) - <a href="js/jquery.countdown-fr.js">jquery.countdown-fr.js</a></li>
+	<li>Galician (Galego) - <a href="js/jquery.countdown-gl.js">jquery.countdown-gl.js</a> (thanks to Moncho Pena and Angel Farrapeira)</li>
+	<li>German (Deutsch) - <a href="js/jquery.countdown-de.js">jquery.countdown-de.js</a> (thanks to Samuel Wulf)</li>
+	<li>Greek (Ελληνικά) - <a href="js/jquery.countdown-el.js">jquery.countdown-el.js</a> (thanks to Philip)</li>
+	<li>Gujarati (ગુજરાતી) - <a href="js/jquery.countdown-gu.js">jquery.countdown-gu.js</a> (thanks to Sahil Jariwala)</li>
+	<li>Hebrew (עברית) - <a href="js/jquery.countdown-he.js">jquery.countdown-he.js</a> (thanks to Nir Livne)</li>
+	<li>Hungarian (Magyar) - <a href="js/jquery.countdown-hu.js">jquery.countdown-hu.js</a> (thanks to Edmond L.)</li>
+	<li>Indonesian (Bahasa Indonesia) - <a href="js/jquery.countdown-id.js">jquery.countdown-id.js</a> (thanks to Erwin Yonathan)</li>
+	<li>Icelandic (Íslenska) - <a href="js/jquery.countdown-is.js">jquery.countdown-is.js</a> (thanks to Róbert Karl Lárusson)</li>
+	<li>Italian (Italiano) - <a href="js/jquery.countdown-it.js">jquery.countdown-it.js</a> (thanks to Davide Bellettini and Roberto Chiaveri)</li>
+	<li>Japanese (日本語) - <a href="js/jquery.countdown-ja.js">jquery.countdown-ja.js</a> (thanks to Ken Ishimoto)</li>
+	<li>Kazakh (қазақша) - <a href="js/jquery.countdown-kk.js">jquery.countdown-kk.js</a> (thanks to Veaceslav Grimalschi)</li>
+	<li>Kannada (ಕನ್ನಡ) - <a href="js/jquery.countdown-kn.js">jquery.countdown-kn.js</a> (thanks to Guru Chaturvedi)</li>
+	<li>Korean (한국어) - <a href="js/jquery.countdown-ko.js">jquery.countdown-ko.js</a> (thanks to Ryan Yu)</li>
+	<li>Latvian (Latviešu Valoda) - <a href="js/jquery.countdown-lv.js">jquery.countdown-lv.js</a> (thanks to Jānis Peisenieks)</li>
+	<li>Lithuanian (lietuvių kalba) - <a href="js/jquery.countdown-lt.js">jquery.countdown-lt.js</a> (thanks to Moacir)</li>
+	<li>Macedonian (македонски јазик) - <a href="js/jquery.countdown-mk.js">jquery.countdown-mk.js</a> (thanks to Gorast Cvetkovski)</li>
+	<li>Malayalam (മലയാളം)  <a href="js/jquery.countdown-ml.js">jquery.countdown-ml.js</a> (thanks to Harilal.B)</li>
+	<li>Malaysian (Bahasa Melayu) - <a href="js/jquery.countdown-ms.js">jquery.countdown-ms.js</a> (thanks to Jason Ong)</li>
+	<li>Norwegian (Bokmål) - <a href="js/jquery.countdown-nb.js">jquery.countdown-nb.js</a> (thanks to Kristian Ravnevand)</li>
+	<li>Polish (Polski) - <a href="js/jquery.countdown-pl.js">jquery.countdown-pl.js</a> (thanks to Pawel Lewtak)</li>
+	<li>Portuguese/Brazilian (Português) - <a href="js/jquery.countdown-pt-BR.js">jquery.countdown-pt-BR.js</a> (thanks to Marcelo Pellicano de Oliveira and Juan Roldan)</li>
+	<li>Romanian (Română) - <a href="js/jquery.countdown-ro.js">jquery.countdown-ro.js</a> (thanks to Edmond L.)</li>
+	<li>Russian (Русский) - <a href="js/jquery.countdown-ru.js">jquery.countdown-ru.js</a> (thanks to Sergey K.)</li>
+	<li>Serbian (српски језик) - <a href="js/jquery.countdown-sr.js">jquery.countdown-sr.js</a> (thanks toPredrag Leka)</li>
+	<li>Serbian (srpski jezik) - <a href="js/jquery.countdown-sr-SR.js">jquery.countdown-sr-SR.js</a> (thanks to Predrag Leka)</li>
+	<li>Slovak (Slovenčina) - <a href="js/jquery.countdown-sk.js">jquery.countdown-sk.js</a> (thanks to Roman Chlebec)</li>
+	<li>Slovenian (Slovenščina) - <a href="js/jquery.countdown-sl.js">jquery.countdown-sl.js</a> (thanks to Borut Tomažin and Jan Zavrl)</li>
+	<li>Spanish (Español) - <a href="js/jquery.countdown-es.js">jquery.countdown-es.js</a> (thanks to Sergio Carracedo Martinez)</li>
+	<li>Swedish (Svenska) - <a href="js/jquery.countdown-sv.js">jquery.countdown-sv.js</a> (thanks to Carl)</li>
+	<li>Thai (ภาษาไทย) - <a href="js/jquery.countdown-th.js">jquery.countdown-th.js</a> (thanks to Pornchai Sakulsrimontri)</li>
+	<li>Turkish (Türkçe) - <a href="js/jquery.countdown-tr.js">jquery.countdown-tr.js</a> (thanks to Bekir Ahmetoğlu)</li>
+	<li>Ukrainian (українська мова) - <a href="js/jquery.countdown-uk.js">jquery.countdown-uk.js</a> (thanks to Misha Goloborodko and Iгор Kоновал)</li>
+	<li>Urdu (&#8235;اُردوُ&#8236;) - <a href="js/jquery.countdown-ur.js">jquery.countdown-ur.js</a> (thanks to Azhar Rasheed)</li>
+	<li>Uzbek (O‘zbek tili) - <a href="js/jquery.countdown-uz.js">jquery.countdown-uz.js</a> (thanks to Alisher Ulugbekov)</li>
+	<li>Vietnamese (Tiếng Việt) - <a href="js/jquery.countdown-vi.js">jquery.countdown-vi.js</a> (thanks to Pham Tien Hung)</li>
+	<li>Welsh (Cymraeg) - <a href="js/jquery.countdown-cy.js">jquery.countdown-cy.js</a> (thanks to Gareth Jones)</li>
+</ul>
+<p>Other translations are welcomed.</p>
+</section>
+<section>
+<header>Comments</header>
+<blockquote><p>It's awesome! You saved me a lot of time trying to create something that does the equivalent...</p></blockquote>
+<div><cite>Daniel McGhan</cite></div>
+<blockquote><p>Estou usando seu script, muito bom, jQuery Countdown.</p></blockquote>
+<div><cite>Tulio Galli</cite></div>
+<blockquote><p>Thank you very much for your countdown timer. I used it on my
+	new website and it's totally critical to the functionality of the site.</p></blockquote>
+<div><cite>Alasdair Boyd</cite></div>
+<blockquote><p>I just want to start by saying I really like this plug-in. 
+	It's very easy to customize.</p></blockquote>
+<div><cite>Mickey Elliott</cite></div>
+<blockquote><p>Wonderful plugin. Very easy to use and modify.</p></blockquote>
+<div><cite>Danielle Swank</cite></div>
+<p style="clear: both;">Contact <a href="index.html">Keith Wood</a> at wood.keith{at}optusnet.com.au 
+	with comments or suggestions.</p>
+</section>
+<section>
+<header id="changes">Change History</header>
+<table id="history">
+<thead>
+<tr><th>Version</th><th>Date</th><th>Changes</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="zip/jquery.countdown.package-2.1.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-2.1.0');">
+	2.1.0</a></td><td class="vdate">19 Nov 2016</td><td><ul>
+	<li>Calling <code>'pause'</code> in <code>onTick</code> caused an infinite loop</li>
+	<li>Corrected Slovenian localisation</li>
+	<li>Added Macedonian localisation</li>
+	<li>JSHint corrections</li>
+	<li>Better inline JSDoc</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-2.0.2.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-2.0.2');">
+	2.0.2</a></td><td class="vdate">10 Jan 2015</td><td><ul>
+	<li>Added <code>resync</code> function</li>
+	<li>Corrected Spanish localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-2.0.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-2.0.1');">
+	2.0.1</a></td><td class="vdate">12 Jul 2014</td><td><ul>
+	<li>Corrected resetting of labels</li>
+	<li>Added Faroese and Icelandic localisations</li>
+	<li>Corrected Croatian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-2.0.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-2.0.0');">
+	2.0.0</a></td><td class="vdate">25 Jan 2014</td><td><ul>
+	<li>Updated underlying plugin framework</li>
+	<li>Changed <code>regional</code> to <code>regionalOptions</code></li>
+	<li>Added <code>toggle</code> and <code>toggleLap</code> commands</li>
+	<li>Added <code>padZeroes</code> option</li>
+	<li>Safeguarded <code>performance</code> access</li>
+	<li>Removed <code>br</code> from standard layout and style with CSS instead</li>
+	<li>Added Urdu localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.6.3.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.6.3');">
+	1.6.3</a></td><td class="vdate">03 Aug 2013</td><td><ul>
+	<li>Corrected layouts derived from markup</li>
+	<li>Corrected timing callbacks for older IE</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.6.2.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.6.2');">
+	1.6.2</a></td><td class="vdate">27 Apr 2013</td><td><ul>
+	<li>Don't recalculate target time if not supplied on option change</li>
+	<li>Corrected clearing of labels when changing</li>
+	<li>Corrected retrieval of time periods when paused</li>
+	<li>Added Malayalam localisation</li>
+	<li>Corrected Farsi and Korean localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.6.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.6.1');">
+	1.6.1</a></td><td class="vdate">15 Dec 2012</td><td><ul>
+	<li>Corrected internal target tracking</li>
+	<li>Corrected for IE10/Chrome high resolution timer</li>
+	<li>Added Albanian, Gujarati, and Uzbek localisations</li>
+	<li>Corrected Galician and Italian localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.6.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.6.0');">
+	1.6.0</a></td><td class="vdate">04 Aug 2012</td><td><ul>
+	<li>Added <code>$.noRequestAnimationFrame</code> to force use of <code>setInterval</code></li>
+	<li>Added <code>digits</code> option to localisations to allow for alternate digit characters</li>
+	<li>Changed <code>change</code> command to <code>option</code></li>
+	<li>Changed <code>settings</code> command to <code>option</code></li>
+	<li>Updated underlying plugin framework</li>
+	<li>Added Armenian, Kannada and Welsh localisations</li>
+	<li>Corrected Portuguese/Brazilian and Ukranian localisations</li>
+	<li>Added Arabic digits to Arabic localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.11.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.11');">
+	1.5.11</a></td><td class="vdate">15 Oct 2011</td><td><ul>
+	<li>Corrected <code>requestAnimationFrame</code> usage for IE</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.10.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.10');">
+	1.5.10</a></td><td class="vdate">08 Oct 2011</td><td><ul>
+	<li>Use <code>requestAnimationFrame</code> when available</li>
+	<li>Added Estonian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.9.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.9');">
+	1.5.9</a></td><td class="vdate">05 Mar 2011</td><td><ul>
+	<li>Added Bengali/Bangla, Croatian, Greek, Malaysian, Serbian/Cyrillic, Serbian/Latin,
+		Slovenian and Vietnamese localisations</li>
+	<li>Corrected Russian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.8.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.8');">
+	1.5.8</a></td><td class="vdate">15 May 2010</td><td><ul>
+	<li>Added <code>significant</code> to restrict number of period amounts shown</li>
+	<li>Added <code>whichLabels</code> for greater control over singular/plural forms of labels</li>
+	<li>Corrected period calculation for count-ups involving years/months</li>
+	<li>Added Bulgarian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.7.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.7');">
+	1.5.7</a></td><td class="vdate">27 Mar 2010</td><td><ul>
+	<li>Added <code>tickInterval</code> to space out <code>onTick</code> callbacks</li>
+	<li>Only call <code>serverSync</code> once per server</li>
+	<li>Added Catalan and Thai localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.6.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.6');">
+	1.5.6</a></td><td class="vdate">13 Feb 2010</td><td><ul>
+	<li>Allowed countdown to count up from zero</li>
+	<li>Corrected error when counting up into an optional time component</li>
+	<li>Added <code>periodsToSeconds</code> function</li>
+	<li>Added Burmese, Finnish, Galician, Latvian, and Lithuanian localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.5.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.5');">
+	1.5.5</a></td><td class="vdate">14 Nov 2009</td><td><ul>
+	<li>Countdown rounds up remainders, e.g. showing hours and minutes only,
+		the countdown shows 1 minute for the last minute</li>
+	<li>Added substitutions to <code>layout</code> setting:
+		<code><em>p</em>1000</code> for the thousands digit of periods</li>
+	<li>Added 'settings' command to retrieve property value(s)</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.4.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.4');">
+	1.5.4</a></td><td class="vdate">26 Sep 2009</td><td><ul>
+	<li>Added <code>serverSync</code> setting for external synchronisation</li>
+	<li>Corrected styling for IE8</li>
+	<li>Added Japanese localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.3.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.3');">
+	1.5.3</a></td><td class="vdate">01 Aug 2009</td><td><ul>
+	<li>Added substitutions to <code>layout</code> setting:
+		<code><em>p</em>nnn</code> for periods with minimum three digits,
+		<code><em>pd</em></code> for individual digits of periods,
+		<code>desc</code> for countdown description,
+		<code>sep</code> for time separator</li>
+	<li>Added Korean localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.2.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.2');">
+	1.5.2</a></td><td class="vdate">09 May 2009</td><td><ul>
+	<li>Added <code>expiryText</code> setting for a simple message on expiry</li>
+	<li>Prevented infinite loop when changing settings in <code>onExpiry</code> callback</li>
+	<li>Fixed negative counts when target date is exactly n months away but earlier in the day</li>
+	<li>Fixed end of month processing for year/month periods</li>
+	<li>Fixed timezone adjustment near end of month</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.1');">
+	1.5.1</a></td><td class="vdate">11 Apr 2009</td><td><ul>
+	<li>Replaced <code>serverTime</code> setting with <code>timezone</code></li>
+	<li>Added <code>UTCDate</code> function</li>
+	<li>Fixed error when resetting a stopped countdown</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.5.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.5.0');">
+	1.5.0</a></td><td class="vdate">28 Mar 2009</td><td><ul>
+	<li>Changed layout definitions</li>
+	<li>'change' command now accepts a single named property and value</li>
+	<li>Changed internal <code>div</code>s to <code>span</code>s</li>
+	<li>All countdowns on a page run off the one timer</li>
+	<li>Added Danish and Ukrainian localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.4.3.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.4.3');">
+	1.4.3</a></td><td class="vdate">07 Feb 2009</td><td><ul>
+	<li>Pass function to <code>setTimeout</code></li>
+	<li>Added Indonesian and Norwegian localisations</li>
+	<li>Updated Romanian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.4.2.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.4.2');">
+	1.4.2</a></td><td class="vdate">13 Dec 2008</td><td><ul>
+	<li>Enhanced plural period terms for Slavic languages</li>
+	<li>Replaced <code>labelsSingle</code> and <code>compactLabelsSingle</code> with
+		<code>labels1</code> and <code>compactLabels1</code> if necessary</li>
+	<li>Added <code>isRTL</code> setting for right-to-left languages</li>
+	<li>Added Hebrew, Russian, Slovak, and Swedish localisations</li>
+	<li>Updated Czech localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.4.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.4.1');">
+	1.4.1</a></td><td class="vdate">18 Oct 2008</td><td><ul>
+	<li>Bug fix for compact times with hours/minutes/seconds</li>
+	<li>Added Persian localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.4.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.4.0');">
+	1.4.0</a></td><td class="vdate">04 Oct 2008</td><td><ul>
+	<li>Added <code>layout</code> setting for custom layouts</li>
+	<li>Added Turkish localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.3.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.3.0');">
+	1.3.0</a></td><td class="vdate">05 July 2008</td><td><ul>
+	<li>Internal changes for instance values</li>
+	<li>Added 'getTimes' command to retrieve array of current periods</li>
+	<li>Added 'pause', 'lap', and 'resume' commands to allow pausing and resuming of countdowns</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.2.2.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.2.2');">
+	1.2.2</a></td><td class="vdate">14 June 2008</td><td><ul>
+	<li>Bug fix for compact times with hours/minutes/seconds</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.2.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.2.1');">
+	1.2.1</a></td><td class="vdate">07 June 2008</td><td><ul>
+	<li>Added relative values for <code>until</code> and <code>since</code></li>
+	<li>Added <code>serverTime</code> option to allow for time zone differences</li>
+	<li>Added <code>alwaysExpire</code> option to force the <code>onExpiry</code>
+		event if starting after the target time</li>
+	<li>Added <code>labelsSingle</code> and <code>compactLabelsSingle</code>
+		options for labels applying to a singular period</li>
+	<li>Added Polish localisation</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.2.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.2.0');">
+	1.2.0</a></td><td class="vdate">03 May 2008</td><td><ul>
+	<li>Added <code>since</code> option for counting up</li>
+	<li>Added Czech, Dutch, Hungarian, Portuguese (Brazilian), Romanian, and Spanish localisations</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.1.1.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.1.1');">
+	1.1.1</a></td><td class="vdate">23 Feb 2008</td><td><ul>
+	<li>Corrected bugs in period calculations for years/months</li>
+	<li>Changed 'remove' command to 'destroy'</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.1.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.1.0');">
+	1.1.0</a></td><td class="vdate">16 Feb 2008</td><td><ul>
+	<li>Updated interface to conform to jQuery UI standards</li>
+	<li>Replaced <code>showDays</code> and <code>showSeconds</code> with <code>format</code> setting</li>
+	<li>Added <code>expiryUrl</code> setting</li>
+	<li>Added Simplified Chinese, Traditional Chinese, Italian localisations</li>
+	<li>Added backwards compatibility module for v1.0</li>
+</ul></td></tr>
+<tr><td><a href="zip/jquery.countdown.package-1.0.0.zip"
+	onclick="pageTracker._trackPageview('/downloads/countdown-1.0.0');">
+	1.0.0</a></td><td class="vdate">26 Jan 2008</td><td><ul>
+	<li>Initial release</li>
+</ul></td></tr>
+</tbody>
+</table>
+</section>
+<footer>
+<p>Contact <a href="index.html">Keith Wood</a> at wood.keith{at}optusnet.com.au 
+	with comments or suggestions.</p>
+<hr>
+<p>
+	&copy; 2008-16, Keith Wood
+	<a id="valid" href="http://validator.w3.org/check?uri=http://keith-wood.name/countdown.html">
+		<img src="img/html5-small.png" alt="Valid HTML 5"></a>
+</p>
+</footer>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4715900-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+</body>
+</html>
